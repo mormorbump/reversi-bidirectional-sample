@@ -1,0 +1,18 @@
+services:
+  app:
+    container_name: app-container
+    build:
+      context: .
+      target: dev-live-reload
+    ports:
+      - "50051:50051"
+      - "6060:6060"   # pprof用ポートを追加
+    environment:
+      APP_ENV: development
+    volumes:
+      - .:/app
+      - go_mod:/go/gen/mod
+      - go_build:/root/.cache/go-build
+volumes:
+  go_mod:
+  go_build:

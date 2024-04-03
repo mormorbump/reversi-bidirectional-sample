@@ -1,0 +1,62 @@
+syntax = "proto3";
+package game;
+
+option go_package = "gen/pb";
+
+import "player.proto";
+import "character.proto";
+
+// Gameサービスでは、サーバ側クライアント側の状態変化に応じて複数種類のリクエスト、レスポンスを送り合うため、「どれか一つ合致したら」という条件であるoneofで定義
+service GameService {
+  rpc Play(stream PlayRequest) returns (stream PlayResponse);
+}
+
+message PlayRequest {
+  int32 room_id = 1;
+  Player player = 2;
+
+  oneof action {
+    StartAction start = 3;
+    MoveAction move =4;
+  }
+}
+
+message StartAction{}
+
+message MoveAction{
+  Move move = 1;
+}
+
+message PlayResponse {
+  oneof event {
+    WaitingEvent waiting = 1;
+    ReadyEvent ready = 2;
+    MoveEvent move = 3;
+    FinishedEvent finished = 4;
+  }
+
+  message WaitingEvent{}
+  message ReadyEvent{}
+  message MoveEvent{
+    Player player = 1;
+    Move move = 2;
+    Board board = 3;
+  }
+  message FinishedEvent {
+    Character winner = 1;
+    Board board = 2;
+  }
+}
+
+message Move{
+  int32 x = 1;
+  int32 y = 2;
+}
+
+// protobufでは二次元配列を定義するためにrepeatedを持つmessageをfieldでrepeatedする必要がある。
+message Board {
+  repeated Col cols = 1;
+  message Col {
+    repeated Character cells = 1;
+  }
+}
