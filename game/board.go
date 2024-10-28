@@ -58,11 +58,19 @@ func (b *Board) PutStone(x int32, y int32, c Character) error {
 	b.Cells[x][y] = c
 
 	// 置いた石の縦/横/斜めの各方向でひっくり返すことのできる石を全てひっくり返す
-	// 各方向 <=> (1,1), (1,-1), (-1,1), (-1,-1)と言うこと
+	// 縦: (0,1),(0,-1)
+	// 斜め: (1,1),(1,-1),(-1,1),(-1,-1)
+	// 横: (1,0),(-1,0)
 	for dx := -1; dx <= 1; dx++ {
 		for dy := -1; dy <= 1; dy++ {
 			// 自分自身はスキップ
 			if dx == 0 && dy == 0 {
+				continue
+			}
+			// ここでもう一度方向ごとにチェックしないとだめ。
+			// 理由は、CanPutStoneで「ある方向はひっくり返せないけど、ある方向はひっくり返せる時」にtrueになるが
+			// そのひっくり返せない方向もここでは判定してないので、全部ひっくり返してしまうため。
+			if b.CountTurnableStonesByDirection(x, y, c, int32(dx), int32(dy)) <= 0 {
 				continue
 			}
 			b.TurnStonesByDirection(x, y, c, int32(dx), int32(dy))
@@ -78,7 +86,9 @@ func (b *Board) CanPutStone(x int32, y int32, c Character) bool {
 	}
 
 	// 置いた石の縦/横/斜めの各方向をチェック
-	// 各方向 <=> (1,1), (1, 0), (1,-1), (0, 1), (-1,1), (-1,-1)と言うこと
+	// 縦: (0,1),(0,-1)
+	// 斜め: (1,1),(1,-1),(-1,1),(-1,-1)
+	// 横: (1,0),(-1,0)
 	for dx := -1; dx <= 1; dx++ {
 		for dy := -1; dy <= 1; dy++ {
 			// (0,0)は自分自身なのでスキップ
@@ -138,6 +148,7 @@ func (b *Board) TurnStonesByDirection(x int32, y int32, c Character, dx int32, d
 
 	for {
 		nc := b.Cells[nx][ny]
+		// 壁か自分の石か、何も置かれてなければループを終了
 		if nc != OpponentCharacter(c) {
 			break
 		}

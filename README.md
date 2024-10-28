@@ -2,6 +2,30 @@
 - オセロを双方向通信で作ってみた
 - room機能あり
 
+## 構造
+
+```
+.
+├── Dockerfile
+├── README.md
+├── assets
+├── build // DTO. pbパッケージとgameパッケージの構造体の変換
+├── client // クライアント側アプリ
+├── cmd // クライアント側main関数
+├── compose.yaml
+├── game // ゲームロジック、構造体。ドメイン
+├── gen // 自動生成
+├── go.mod
+├── handler // gRPCのサービスに対応したハンドラ
+├── proto // スキーマ
+├── script
+└── server
+    ├── grpc // gRPCサーバ
+    └── handler // gRPCの各サービスに対応したハンドラ
+ 
+
+```
+
 ## 要件
 1. マッチング処理
 2. Playerがマッチング処理を行った場合、まだ部屋がなければホストとして部屋を作成

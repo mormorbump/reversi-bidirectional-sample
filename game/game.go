@@ -16,13 +16,14 @@ func NewGame(me Character) *Game {
 	}
 }
 
-// Move 手を打血、その後盤面を出力する
+// Move 手を打ち、その後盤面を出力する
 // 返り値として、ゲームが終了したかを返却
 // TODO: Progressなどに命名変更するべき
 func (g *Game) Move(x int32, y int32, c Character) (bool, error) {
 	if g.finished {
 		return true, nil
 	}
+	// g.Boardに石をおくメソッド
 	err := g.Board.PutStone(x, y, c)
 	if err != nil {
 		return false, err

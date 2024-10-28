@@ -21,6 +21,11 @@ message PlayRequest {
   }
 }
 
+message Move{
+  int32 x = 1;
+  int32 y = 2;
+}
+
 message StartAction{}
 
 message MoveAction{
@@ -46,11 +51,6 @@ message PlayResponse {
     Character winner = 1;
     Board board = 2;
   }
-}
-
-message Move{
-  int32 x = 1;
-  int32 y = 2;
 }
 
 // protobufでは二次元配列を定義するためにrepeatedを持つmessageをfieldでrepeatedする必要がある。
